@@ -1,0 +1,50 @@
+## ohlcv
+def convert_tick_to_ohlcv(data):
+    """
+    Converts given Binance tick data into 1-hour interval OHLCV (Open, High, Low, Close, Volume) data.
+    :param data: DataFrame with Tick data
+    :return: DataFrame with the Open, High, Low, Close, Volume values
+    """
+
+    data['time'] = pd.to_datetime(data['time'], unit='ms')
+    ohlcv = data.resample('1H', on='time').agg({
+        'price': ['first', 'max', 'min', 'last'],
+        'qty': 'sum'
+})
+
+    ohlcv.columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+    return ohlcv
+
+## volatility
+def calculate_volatility(data, window=20):
+    """
+    Calculate the rolling volatility using the standard deviation of returns.
+    :param data: DataFrame with OHLCV data
+    :param window: The number of periods to use for calculating the standard deviation
+    :return: DataFrame with the volatility values
+    """
+
+    # Calculate daily returns
+    data['returns'] = data['Close'].pct_change()
+
+    # Calculate the rolling standard deviation of returns
+    data['volatility'] = data['returns'].rolling(window=window).std()
+
+return data
+
+## mape
+from sklearn.metrics import mean_absolute_percentage_error
+y_true = [3, -0.5, 2, 7]
+y_pred = [2.5, 0.0, 2, 8]
+mean_absolute_percentage_error(y_true, y_pred)
+
+y_true = [[0.5, 1], [-1, 1], [7, -6]]
+y_pred = [[0, 2], [-1, 2], [8, -5]]
+mean_absolute_percentage_error(y_true, y_pred)
+mean_absolute_percentage_error(y_true, y_pred, multioutput=[0.3, 0.7])
+
+# the value when some element of the y_true is zero is arbitrarily high because
+# of the division by epsilon
+y_true = [1., 0., 2.4, 7.]
+y_pred = [1.2, 0.1, 2.4, 8.]
+mean_absolute_percentage_error(y_true, y_pred)
