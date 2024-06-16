@@ -1,0 +1,8 @@
+pandas==1.5.3
+numpy==1.24.3
+scikit-learn==1.3.0
+pmdarima==2.0.4
+statsmodels==0.14.0
+dask==2023.6.0
+bayesian-optimization
+BayesianOptimization
